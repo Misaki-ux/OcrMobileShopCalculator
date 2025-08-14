@@ -9,9 +9,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Camera, useCameraDevices } from 'react-native-vision-camera';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import { OCRService } from '../services/OCRService';
 import { StorageService } from '../services/StorageService';
 import { ScanHistory, OCRResult } from '../types';
+import { colors, spacing, fontSizes, fontWeights, borderRadius, shadows } from '../utils/styles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -104,12 +106,19 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({
   if (!hasPermission) {
     return (
       <View style={styles.container}>
-        <Text style={styles.permissionText}>
-          Permission d'accès à la caméra requise
-        </Text>
-        <TouchableOpacity style={styles.button} onPress={checkPermissions}>
-          <Text style={styles.buttonText}>Demander la permission</Text>
-        </TouchableOpacity>
+        <View style={styles.permissionContainer}>
+          <Icon name="camera" size={64} color={colors.primary[600]} />
+          <Text style={styles.permissionTitle}>
+            Permission d'accès à la caméra requise
+          </Text>
+          <Text style={styles.permissionSubtitle}>
+            Cette application a besoin d'accéder à votre caméra pour scanner les prix
+          </Text>
+          <TouchableOpacity style={styles.permissionButton} onPress={checkPermissions}>
+            <Icon name="check" size={16} color={colors.white} style={styles.buttonIcon} />
+            <Text style={styles.permissionButtonText}>Autoriser l'accès</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
@@ -117,8 +126,10 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({
   if (!device) {
     return (
       <View style={styles.container}>
-        <ActivityIndicator size="large" color="#007AFF" />
-        <Text style={styles.loadingText}>Chargement de la caméra...</Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={colors.primary[600]} />
+          <Text style={styles.loadingText}>Chargement de la caméra...</Text>
+        </View>
       </View>
     );
   }
@@ -142,25 +153,30 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({
             <View style={[styles.corner, styles.cornerBottomRight]} />
           </View>
           
-          <Text style={styles.instructionText}>
-            Placez le prix dans le cadre
-          </Text>
+          <View style={styles.instructionContainer}>
+            <Icon name="bullseye" size={24} color={colors.white} />
+            <Text style={styles.instructionText}>
+              Placez le prix dans le cadre
+            </Text>
+          </View>
         </View>
 
         {/* Contrôles de la caméra */}
         <View style={styles.controls}>
           <TouchableOpacity style={styles.controlButton} onPress={onClose}>
-            <Text style={styles.controlButtonText}>✕</Text>
+            <Icon name="times" size={20} color={colors.white} />
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.controlButton} onPress={toggleFlash}>
-            <Text style={styles.controlButtonText}>
-              {flash === 'off' ? '⚡' : '⚡'}
-            </Text>
+            <Icon 
+              name={flash === 'off' ? 'bolt' : 'bolt'} 
+              size={20} 
+              color={flash === 'off' ? colors.warning[500] : colors.warning[400]} 
+            />
           </TouchableOpacity>
           
           <TouchableOpacity style={styles.controlButton} onPress={switchCamera}>
-            <Text style={styles.controlButtonText}>🔄</Text>
+            <Icon name="refresh" size={20} color={colors.white} />
           </TouchableOpacity>
         </View>
 
@@ -172,11 +188,15 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({
             disabled={isScanning}
           >
             {isScanning ? (
-              <ActivityIndicator size="large" color="#FFFFFF" />
+              <ActivityIndicator size="large" color={colors.white} />
             ) : (
               <View style={styles.captureButtonInner} />
             )}
           </TouchableOpacity>
+          
+          <Text style={styles.captureText}>
+            {isScanning ? 'Traitement...' : 'Appuyez pour scanner'}
+          </Text>
         </View>
       </Camera>
     </View>
@@ -186,7 +206,7 @@ export const CameraScanner: React.FC<CameraScannerProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: colors.black,
   },
   camera: {
     flex: 1,
@@ -205,7 +225,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 30,
     height: 30,
-    borderColor: '#007AFF',
+    borderColor: colors.primary[500],
     borderTopWidth: 3,
     borderLeftWidth: 3,
     top: 0,
@@ -234,38 +254,40 @@ const styles = StyleSheet.create({
     borderBottomWidth: 3,
     borderRightWidth: 3,
   },
+  instructionContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.8)',
+    paddingHorizontal: spacing[5],
+    paddingVertical: spacing[3],
+    borderRadius: borderRadius.full,
+    marginTop: spacing[5],
+  },
   instructionText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    marginTop: 20,
-    textAlign: 'center',
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 20,
+    color: colors.white,
+    fontSize: fontSizes.base,
+    marginLeft: spacing[2],
+    fontWeight: fontWeights.medium,
   },
   controls: {
     position: 'absolute',
-    top: 50,
-    right: 20,
+    top: spacing[12],
+    right: spacing[5],
     flexDirection: 'column',
   },
   controlButton: {
-    width: 44,
-    height: 44,
+    width: 48,
+    height: 48,
     backgroundColor: 'rgba(0,0,0,0.7)',
-    borderRadius: 22,
+    borderRadius: borderRadius.full,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
-  },
-  controlButtonText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+    marginBottom: spacing[2],
+    ...shadows.md,
   },
   captureContainer: {
     position: 'absolute',
-    bottom: 50,
+    bottom: spacing[12],
     left: 0,
     right: 0,
     alignItems: 'center',
@@ -273,42 +295,80 @@ const styles = StyleSheet.create({
   captureButton: {
     width: 80,
     height: 80,
-    borderRadius: 40,
-    backgroundColor: '#007AFF',
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.primary[600],
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 4,
-    borderColor: '#FFFFFF',
+    borderColor: colors.white,
+    ...shadows.lg,
   },
   captureButtonDisabled: {
-    backgroundColor: '#999',
+    backgroundColor: colors.gray[400],
   },
   captureButtonInner: {
     width: 60,
     height: 60,
-    borderRadius: 30,
-    backgroundColor: '#FFFFFF',
+    borderRadius: borderRadius.full,
+    backgroundColor: colors.white,
   },
-  permissionText: {
-    color: '#FFFFFF',
-    fontSize: 18,
+  captureText: {
+    color: colors.white,
+    fontSize: fontSizes.sm,
+    marginTop: spacing[3],
+    fontWeight: fontWeights.medium,
+    backgroundColor: 'rgba(0,0,0,0.7)',
+    paddingHorizontal: spacing[4],
+    paddingVertical: spacing[2],
+    borderRadius: borderRadius.full,
+  },
+  permissionContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing[8],
+  },
+  permissionTitle: {
+    fontSize: fontSizes.xl,
+    fontWeight: fontWeights.bold,
+    color: colors.white,
     textAlign: 'center',
-    marginBottom: 20,
+    marginTop: spacing[6],
+    marginBottom: spacing[3],
   },
-  button: {
-    backgroundColor: '#007AFF',
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    borderRadius: 8,
+  permissionSubtitle: {
+    fontSize: fontSizes.base,
+    color: colors.gray[300],
+    textAlign: 'center',
+    marginBottom: spacing[6],
+    lineHeight: fontSizes.xl,
   },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+  permissionButton: {
+    backgroundColor: colors.primary[600],
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: spacing[6],
+    paddingVertical: spacing[4],
+    borderRadius: borderRadius.lg,
+    ...shadows.md,
+  },
+  buttonIcon: {
+    marginRight: spacing[2],
+  },
+  permissionButtonText: {
+    color: colors.white,
+    fontSize: fontSizes.lg,
+    fontWeight: fontWeights.semibold,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   loadingText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    marginTop: 20,
+    color: colors.white,
+    fontSize: fontSizes.lg,
+    marginTop: spacing[5],
+    fontWeight: fontWeights.medium,
   },
 });
