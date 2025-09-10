@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="resume classic">
+  <header>
+    <h1>{{ resume.full_name }}</h1>
+    <div>{{ resume.title }}</div>
+    <div>{{ resume.email }} | {{ resume.phone }} | {{ resume.location }}</div>
+  </header>
+  <hr>
+  <section>
+    <h2>Objective</h2>
+    <p>{{ resume.summary }}</p>
+  </section>
+  <section>
+    <h2>Professional Experience</h2>
+    {% for exp in resume.experience %}
+    <div>
+      <strong>{{ exp.company }}</strong>, {{ exp.role }} ({{ exp.start }} - {{ exp.end }})
+      <ul>
+        {% for d in exp.details %}
+        <li>{{ d }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </section>
+  <section>
+    <h2>Education</h2>
+    {% for edu in resume.education %}
+    <div>{{ edu.degree }}, {{ edu.school }} — {{ edu.year }}</div>
+    {% endfor %}
+  </section>
+  {% if resume.skills %}
+  <section>
+    <h2>Skills</h2>
+    <p>{{ resume.skills | join(,) }}</p>
+  </section>
+  {% endif %}
+  {% if resume.links %}
+  <section>
+    <h2>Links</h2>
+    <ul>
+      {% for l in resume.links %}
+      <li><a href="{{ l.url }}" target="_blank">{{ l.label }}</a></li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+</article>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Edit Resume</h1>
+<form method="post">
+  <section>
+    <h2>Basics</h2>
+    <label>Full Name <input name="full_name" value="{{ resume.full_name }}"></label>
+    <label>Title <input name="title" value="{{ resume.title }}"></label>
+    <label>Email <input name="email" value="{{ resume.email }}"></label>
+    <label>Phone <input name="phone" value="{{ resume.phone }}"></label>
+    <label>Location <input name="location" value="{{ resume.location }}"></label>
+    <label>Summary <textarea name="summary" rows="4">{{ resume.summary }}</textarea></label>
+    <label>Skills (comma separated) <input name="skills" value="{{ resume.skills | join(,) }}"></label>
+  </section>
+  <section>
+    <h2>Experience</h2>
+    {% for i, exp in enumerate(resume.experience) %}
+    <div class="card">
+      <label>Company <input name="experience[{{ i }}][company]" value="{{ exp.company }}"></label>
+      <label>Role <input name="experience[{{ i }}][role]" value="{{ exp.role }}"></label>
+      <div class="grid">
+        <label>Start <input name="experience[{{ i }}][start]" value="{{ exp.start }}"></label>
+        <label>End <input name="experience[{{ i }}][end]" value="{{ exp.end }}"></label>
+      </div>
+      <label>Details (one per line)
+        <textarea name="experience[{{ i }}][details]" rows="4">{{ exp.details | join(n) }}</textarea>
+      </label>
+    </div>
+    {% endfor %}
+    <p class="hint">Add more by duplicating fields after save.</p>
+  </section>
+  <section>
+    <h2>Education</h2>
+    {% for i, edu in enumerate(resume.education) %}
+    <div class="card">
+      <label>School <input name="education[{{ i }}][school]" value="{{ edu.school }}"></label>
+      <label>Degree <input name="education[{{ i }}][degree]" value="{{ edu.degree }}"></label>
+      <label>Year <input name="education[{{ i }}][year]" value="{{ edu.year }}"></label>
+    </div>
+    {% endfor %}
+  </section>
+  <section>
+    <h2>Links</h2>
+    {% for i, link in enumerate(resume.links) %}
+    <div class="card">
+      <label>Label <input name="links[{{ i }}][label]" value="{{ link.label }}"></label>
+      <label>URL <input name="links[{{ i }}][url]" value="{{ link.url }}"></label>
+    </div>
+    {% endfor %}
+  </section>
+
+  <button type="submit">Save</button>
+</form>
+{% endblock %}
