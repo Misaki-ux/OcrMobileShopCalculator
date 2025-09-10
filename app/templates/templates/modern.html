@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block content %}
+<article class="resume modern">
+  <header>
+    <h1>{{ resume.full_name }}</h1>
+    <p class="subtitle">{{ resume.title }}</p>
+    <p class="meta">{{ resume.email }} · {{ resume.phone }} · {{ resume.location }}</p>
+    <ul class="links">
+      {% for link in resume.links %}
+      <li><a href="{{ link.url }}" target="_blank">{{ link.label }}</a></li>
+      {% endfor %}
+    </ul>
+  </header>
+  <section>
+    <h2>Summary</h2>
+    <p>{{ resume.summary }}</p>
+  </section>
+  <section>
+    <h2>Skills</h2>
+    <ul class="tags">
+      {% for s in resume.skills %}<li>{{ s }}</li>{% endfor %}
+    </ul>
+  </section>
+  <section>
+    <h2>Experience</h2>
+    {% for exp in resume.experience %}
+    <div class="item">
+      <div class="row">
+        <strong>{{ exp.role }}</strong><span class="muted">{{ exp.start }} – {{ exp.end }}</span>
+      </div>
+      <div class="row">
+        <span class="muted">{{ exp.company }}</span>
+      </div>
+      <ul>
+        {% for d in exp.details %}
+        <li>{{ d }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endfor %}
+  </section>
+  <section>
+    <h2>Education</h2>
+    {% for edu in resume.education %}
+    <div class="row"><strong>{{ edu.degree }}</strong> — <span class="muted">{{ edu.school }}</span> · {{ edu.year }}</div>
+    {% endfor %}
+  </section>
+</article>
+{% endblock %}

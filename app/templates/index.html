@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>CV Builder</h1>
+<p>Start by importing JSON or editing directly.</p>
+<form action="{{ url_for("main.import_json") }}" method="post" enctype="multipart/form-data">
+  <label>Import JSON file
+    <input type="file" name="file" accept="application/json">
+  </label>
+  <button type="submit">Import</button>
+</form>
+<p><a href="{{ url_for("main.edit") }}" class="button">Edit Resume</a></p>
+{% endblock %}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title or "CV Builder" }}</title>
+    <link rel="stylesheet" href="https://unpkg.com/modern-css-reset/dist/reset.min.css">
+    <link rel="stylesheet" href="{{ url_for("static", filename="styles.css") }}">
+  </head>
+  <body>
+    <header class="container">
+      <nav class="nav">
+        <a href="{{ url_for("main.index") }}">Home</a>
+        <a href="{{ url_for("main.edit") }}">Edit</a>
+        <a href="{{ url_for("main.preview") }}">Preview</a>
+      </nav>
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      <ul class="flash">
+        {% for category, message in messages %}
+        <li class="{{ category }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+    </header>
+    <main class="container">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>
